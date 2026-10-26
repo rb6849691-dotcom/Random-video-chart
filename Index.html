@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Video Chat</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: white;
+      text-align: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+    }
+
+    h1 {
+      color: #ffd166;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: #d6e0f0;
+      margin-bottom: 25px;
+    }
+
+    .videos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .video-box {
+      background: #101722;
+      border: 1px solid #43536a;
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 190px;
+    }
+
+    .video-box h3 {
+      font-size: 14px;
+      color: #ffd166;
+    }
+
+    video {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      background: #101722;
+    }
+
+    .controls {
+      margin-top: 22px;
+    }
+
+    button {
+      padding: 13px 22px;
+      margin: 5px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #start {
+      background: #06d6a0;
+      color: #10251f;
+    }
+
+    #next {
+      background: #ffd166;
+      color: #222;
+    }
+
+    #stop {
+      background: #ef476f;
+      color: white;
+    }
+
+    #status {
+      margin-top: 20px;
+      color: #ffd166;
+    }
+
+    .note {
+      margin-top: 25px;
+      color: #c7d2e2;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 450px) {
+      body {
+        padding: 12px;
+      }
+
+      .video-box, video {
+        min-height: 150px;
+        height: 150px;
+      }
+
+      button {
+        padding: 12px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Random Video Chat</h1>
+    <p class="subtitle">Meet new people around the world</p>
+
+    <div class="videos">
+      <section class="video-box">
+        <h3>You</h3>
+        <video id="localVideo" autoplay muted playsinline></video>
+      </section>
+
+      <section class="video-box">
+        <h3>Stranger</h3>
+        <video id="remoteVideo" autoplay playsinline></video>
+      </section>
+    </div>
+
+    <div class="controls">
+      <button id="start">Start Camera</button>
+      <button id="next">Next</button>
+      <button id="stop">Stop</button>
+    </div>
+
+    <p id="status">Ready to start</p>
+
+    <p class="note">
+      First version: camera preview and interface.
+      Online stranger matching and video calling
+      will be added in the next steps.
+    </p>
+  </main>
+
+  <script>
+    const localVideo = document.getElementById("localVideo");
+    const statusText = document.getElementById("status");
+
+    let localStream = null;
+
+    document.getElementById("start").onclick = async () => {
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+        });
+
+        localVideo.srcObject = localStream;
+        statusText.textContent =
+          "Camera ready. Stranger matching is not connected yet.";
+      } catch (error) {
+        statusText.textContent =
+          "Camera unavailable. Allow camera and microphone permission.";
+      }
+    };
+
+    document.getElementById("next").onclick = () => {
+      statusText.textContent =
+        "Random matching will be connected in the next version.";
+    };
+
+    document.getElementById("stop").onclick = () => {
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localVideo.srcObject = null;
+        localStream = null;
+      }
+
+      statusText.textContent = "Camera stopped.";
+    };
+  </script>
+</body>
+</html>
